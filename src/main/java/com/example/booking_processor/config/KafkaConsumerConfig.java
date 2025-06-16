@@ -11,6 +11,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,18 @@ public class KafkaConsumerConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerConfig.class);
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
+    @Value("${spring.kafka.consumer.group-id}")
+    private String groupId;
+
+    @Value("${spring.kafka.consumer.key-deserializer}")
+    private String keyDeserializer;
+
+    @Value("${spring.kafka.consumer.value-deserializer}")
+    private String valueDeserializer;
+
     /**
      * Creates a ConsumerFactory for Kafka consumers.
      *
@@ -35,10 +48,10 @@ public class KafkaConsumerConfig {
         logger.info("Creating Kafka ConsumerFactory");
         try {
             Map<String, Object> props = new HashMap<>();
-            props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-            props.put(ConsumerConfig.GROUP_ID_CONFIG, "booking-processor-group");
-            props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+            props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+            props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+            props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
+            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
             logger.debug("Kafka ConsumerFactory properties: {}", props);
             return new DefaultKafkaConsumerFactory<>(props);
         } catch (Exception ex) {
